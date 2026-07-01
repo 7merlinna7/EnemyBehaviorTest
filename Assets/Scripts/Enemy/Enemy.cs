@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
 
     private AgroBehaviour _agroBehaviour;
     private RestBehaviour _restBehaviour;
+    private Transform _currentTarget;
 
     private void Awake()
     {
@@ -21,7 +22,7 @@ public class Enemy : MonoBehaviour
         if (_currentMainState == MainEnemyStates.RestState)
             _restBehaviour.Rest(_currentRestEnemyState);
         if (_currentMainState == MainEnemyStates.AgroState)
-            _agroBehaviour.Agro(_currentAgroEnemyState);
+            _agroBehaviour.Agro(_currentTarget,_currentAgroEnemyState);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -29,6 +30,7 @@ public class Enemy : MonoBehaviour
         Hero hero = other.GetComponent<Hero>();
         if (hero != null)
         {
+            GetTarget(hero.transform);
             _currentMainState = MainEnemyStates.AgroState;
         }
     }
@@ -41,4 +43,6 @@ public class Enemy : MonoBehaviour
             _currentMainState = MainEnemyStates.RestState;
         }
     }
+
+    private void GetTarget(Transform target) =>_currentTarget = target; 
 }
