@@ -1,11 +1,10 @@
 using UnityEngine;
 
-public class EnemyMover : MonoBehaviour
+public class Mover : MonoBehaviour
 {
     [SerializeField] private float _speed;
     [SerializeField] private float _rotationSpeed;
 
-    private Vector3 _currentTarget;
     private Quaternion _lookRotation;
 
     public void Move(Vector3 target,int direction)
@@ -16,10 +15,18 @@ public class EnemyMover : MonoBehaviour
         ProcessMoveToTarget(normalazedMoveDirection);
     }
 
+    public void Move(Vector3 direction, Transform _characterTransform)
+    {
+        Vector3 normalazedMoveDirection = direction.normalized;
+        ProcessRorateTo(_characterTransform, normalazedMoveDirection);
+        ProcessMoveToTarget(normalazedMoveDirection);
+    }
+
     public Vector3 GetDirectionToTarget(Vector3 currentTarget) => currentTarget - transform.position;
 
     public void ProcessMoveToTarget(Vector3 direction) => transform.Translate(direction * _speed * Time.deltaTime, Space.World);
-    public void ProcessRorateTo(Transform _characterTransform, Vector3 direction)
+
+    private void ProcessRorateTo(Transform _characterTransform, Vector3 direction)
     {
         _lookRotation = Quaternion.LookRotation(direction);
         if (_lookRotation != Quaternion.identity)

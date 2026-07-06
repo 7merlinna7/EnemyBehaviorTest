@@ -1,18 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private const string HorizontalAxisName = "Horizontal";
+    private const string VerticalAxisName = "Vertical";
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField] private Mover _mover;
+    private Vector3 _input;
+
+    private void Update()
     {
-        
+        _input = new Vector3(Input.GetAxisRaw(HorizontalAxisName), 0, Input.GetAxisRaw(VerticalAxisName));
+        if (_input!= Vector3.zero)
+            _mover.Move(_input,transform);
     }
 }

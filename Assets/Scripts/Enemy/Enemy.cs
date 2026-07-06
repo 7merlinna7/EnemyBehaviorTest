@@ -2,27 +2,35 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private RestEnemyStates _currentRestEnemyState;
-    [SerializeField] private AgroEnemyStates _currentAgroEnemyState;
+    public static int BackDirection = -1;
+    public static int ForwardDirection = 1;
 
     private MainEnemyStates _currentMainState = MainEnemyStates.RestState;
+    private IRestBehaviour _restEnemyState;
+    private IAgroBehaviour _agroEnemyState;
 
-    private AgroBehaviour _agroBehaviour;
-    private RestBehaviour _restBehaviour;
-    private Transform _currentTarget;
+    private Transform _heroTarget;
+    private DeathEffect _deathEffect;
 
-    private void Awake()
+    public void Kill()
     {
-        _agroBehaviour = GetComponent<AgroBehaviour>();
-        _restBehaviour = GetComponent<RestBehaviour>();
+        _deathEffect.AddEffect(transform);
+        Destroy(this.gameObject);
+    }
+
+    public void Initialize(IAgroBehaviour agroBehaviour,IRestBehaviour restBehaviour)
+    {
+        _agroEnemyState = agroBehaviour;
+        _restEnemyState = restBehaviour;
+        _deathEffect = GetComponent<DeathEffect>();
     }
 
     private void Update()
     {
         if (_currentMainState == MainEnemyStates.RestState)
-            _restBehaviour.Rest(_currentRestEnemyState);
+            _restEnemyState.Rest();
         if (_currentMainState == MainEnemyStates.AgroState)
-            _agroBehaviour.Agro(_currentTarget,_currentAgroEnemyState);
+            _agroEnemyState.Agro();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -30,7 +38,7 @@ public class Enemy : MonoBehaviour
         Hero hero = other.GetComponent<Hero>();
         if (hero != null)
         {
-            GetTarget(hero.transform);
+            GetHeroTarget(hero.transform);
             _currentMainState = MainEnemyStates.AgroState;
         }
     }
@@ -44,5 +52,5 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void GetTarget(Transform target) =>_currentTarget = target; 
+    private void GetHeroTarget(Transform target) =>_heroTarget = target; 
 }
